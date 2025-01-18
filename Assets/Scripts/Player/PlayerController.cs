@@ -3,20 +3,45 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Player Movement")]
     public float moveSpeed = 5f;
+
+    [Header("Player Dash")]
     public float dashDistance = 3f;         // 대쉬 거리
     public float dashDuration = 0.2f;       // 무적 시간
 
     public PlayerInput playerInput;
     private Rigidbody playerRigidbody;
+    private LineRenderer rangeLineRenderer;
 
     public bool isDashing = false;         // 대쉬
     public bool isInvincible = false;      // 무적
+
+    private bool isRangeVisualizerActive = false;
+
+    [Header("Player Bullet")]
+    public GameObject projectilePrefab;   // 발사체 프리팹
+    public Transform projectileSpawnPoint; // 발사체 생성 위치
+    public float projectileSpeed = 10f;    // 발사체 속도
+    public float projectileLifetime = 5f; // 발사체 생존 시간
+
+    [Header("Attack")]
+    public float attackCooldown = 0.5f;    // 공격 속도 (초당)
+    public float attackRange = 10f;        // 사거리
+    public float projectileThickness = 0.8f; // 발사체 두께
+
+    private float lastAttackTime = 0f;
+
 
     private void Start()
     {
         playerInput = GetComponent<PlayerInput>();
         playerRigidbody = GetComponent<Rigidbody>();
+
+        // LineRenderer 초기화
+        CreateRangeVisualizer();
+
+        ToggleRangeVisualizer(false);
     }
 
     private void FixedUpdate()
@@ -29,9 +54,29 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // CapsLock 키 입력 감지로 토글
+        if (Input.GetKeyDown(KeyCode.CapsLock))
+        {
+            ToggleRangeVisualizer(!isRangeVisualizerActive); // 현재 상태 반대로 설정
+        }
+
+        if (!isDashing && isRangeVisualizerActive)
+        {
+            UpdateRangeVisualizer(); // 범위 시각화 업데이트
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && !isDashing)
         {
             StartCoroutine(Dash());
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                AttackAtMouseDirection();
+                lastAttackTime = Time.time;
+            }
         }
     }
 
@@ -101,5 +146,116 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f); // 0.2초 무적 유지
         isInvincible = false;
+    }
+
+    private void AttackAtMouseDirection()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo))
+        {
+            Vector3 targetPosition = hitInfo.point;
+            targetPosition.y = transform.position.y; // 높이는 캐릭터와 동일하게 유지
+
+            // 클릭한 방향으로 발사체 생성
+            Vector3 direction = (targetPosition - projectileSpawnPoint.position).normalized;
+            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+            if (projectileRb != null)
+            {
+                projectileRb.velocity = direction * projectileSpeed;
+
+                // 발사체와 캐릭터의 충돌 방지
+                Physics.IgnoreCollision(projectile.GetComponent<Collider>(), GetComponent<Collider>());
+            }
+
+            // 발사체의 사거리 제한
+            StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position));
+
+            // 발사체 두께 시각화
+            LineRenderer lineRenderer = projectile.GetComponent<LineRenderer>();
+            if (lineRenderer != null)
+            {
+                lineRenderer.startWidth = projectileThickness;
+                lineRenderer.endWidth = projectileThickness;
+                lineRenderer.SetPosition(0, projectileSpawnPoint.position);
+                lineRenderer.SetPosition(1, projectileSpawnPoint.position + direction * attackRange);
+            }
+        }
+    }
+
+    private IEnumerator DestroyProjectileAfterRange(GameObject projectile, Vector3 startPosition)
+    {
+        float distanceTraveled = 0f;
+
+        while (distanceTraveled < attackRange)
+        {
+            if (projectile == null)
+                yield break;
+
+            distanceTraveled = Vector3.Distance(startPosition, projectile.transform.position);
+            yield return null;
+        }
+
+        Destroy(projectile);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (projectileSpawnPoint != null)
+        {
+            // 사거리 기즈모 (빨간색)
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(projectileSpawnPoint.position, attackRange);
+
+            // 투사체 범위(두께) 기즈모 (파란색)
+            Gizmos.color = Color.blue;
+            Vector3 start = projectileSpawnPoint.position;
+            Vector3 end = start + transform.forward * attackRange;
+
+            // 투사체 두께 반영
+            Gizmos.DrawLine(start, end);
+            Gizmos.DrawWireSphere(start, projectileThickness / 2);
+            Gizmos.DrawWireSphere(end, projectileThickness / 2);
+        }
+    }
+
+    private void CreateRangeVisualizer()
+    {
+        // LineRenderer 컴포넌트 추가
+        rangeLineRenderer = gameObject.AddComponent<LineRenderer>();
+
+        // LineRenderer 설정
+        rangeLineRenderer.startWidth = projectileThickness;
+        rangeLineRenderer.endWidth = projectileThickness;
+        rangeLineRenderer.material = new Material(Shader.Find("Sprites/Default")); // 기본 쉐이더
+        rangeLineRenderer.startColor = Color.blue;
+        rangeLineRenderer.endColor = Color.blue;
+
+        rangeLineRenderer.positionCount = 2; // 시작점과 끝점
+        rangeLineRenderer.useWorldSpace = true;
+
+        UpdateRangeVisualizer();
+    }
+
+    private void UpdateRangeVisualizer()
+    {
+        if (rangeLineRenderer != null && projectileSpawnPoint != null)
+        {
+            Vector3 start = projectileSpawnPoint.position;
+            Vector3 end = start + transform.forward * attackRange;
+
+            rangeLineRenderer.SetPosition(0, start); // 시작 위치
+            rangeLineRenderer.SetPosition(1, end);   // 끝 위치
+        }
+    }
+
+    private void ToggleRangeVisualizer(bool isActive)
+    {
+        if (rangeLineRenderer != null)
+        {
+            rangeLineRenderer.enabled = isActive; // 활성화 여부 토글
+        }
+        isRangeVisualizerActive = isActive;
     }
 }
