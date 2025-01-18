@@ -82,12 +82,6 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         isInvincible = true;
 
-        PlayerAnimationManager animationManager = GetComponent<PlayerAnimationManager>();
-        if (animationManager != null)
-        {
-            animationManager.animator.SetBool("IsDashing", true);
-        }
-
         Vector3 dashDirection = transform.forward;
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + dashDirection * dashDistance;
@@ -105,13 +99,7 @@ public class PlayerController : MonoBehaviour
 
         isDashing = false;
 
-        if (animationManager != null)
-        {
-            animationManager.animator.SetBool("IsDashing", false);
-        }
-
         yield return new WaitForSeconds(0.2f); // 0.2초 무적 유지
         isInvincible = false;
     }
-
 }
