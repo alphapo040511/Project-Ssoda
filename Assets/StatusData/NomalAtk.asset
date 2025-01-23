@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5cd541b02ad557a47b88276bf26fe67b, type: 3}
-  m_Name: AttackStatusData
+  m_Name: NomalAtk
   m_EditorClassIdentifier: 
   atkCooldown: 0.5
   atkRange: 10
