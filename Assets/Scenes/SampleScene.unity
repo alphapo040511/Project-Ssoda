@@ -1233,6 +1233,8 @@ GameObject:
   - component: {fileID: 2094186986}
   - component: {fileID: 2094186985}
   - component: {fileID: 2094186982}
+  - component: {fileID: 2094186988}
+  - component: {fileID: 2094186987}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -1341,20 +1343,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f697ec76fddcc3c4ca1eb93ed9812d5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  dashDistance: 3
-  dashDuration: 0.2
+  playerStatus: {fileID: 11400000, guid: 8d0915addd7c7134d811de53fff1694a, type: 2}
+  attackStatus: {fileID: 11400000, guid: 5219bad2baff02b489c4b19f3c61260d, type: 2}
   playerInput: {fileID: 0}
   isDashing: 0
   isInvincible: 0
+  isRangeVisualizerActive: 0
   projectilePrefab: {fileID: 1986066640074788963, guid: 6830c58ed15bd30498527caa0436783f,
     type: 3}
   projectileSpawnPoint: {fileID: 2015968007}
-  projectileSpeed: 10
-  projectileLifetime: 5
-  attackCooldown: 0.5
-  attackRange: 10
-  projectileThickness: 0.8
 --- !u!114 &2094186983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1423,6 +1420,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 485250566}
   stateMachine: {fileID: 2094186985}
+--- !u!114 &2094186987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094186977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8f4b506383b1f94bb0621edb0835247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2094186988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094186977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15c28e1a11c054409a07ad75d5ed7b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
