@@ -12,5 +12,5 @@ public class Drink : MonoBehaviour
     [SerializeField] private List<BuffData> buffDatas;
 
     [Header("추가 되는 공격 방식")]
-    [SerializeField] private string weaponIndex;
+    [SerializeField] private AttackType weaponTypes;
 }
