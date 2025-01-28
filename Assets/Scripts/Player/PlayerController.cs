@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRigidbody;
     private GizmoVisualizer visualizer;
     private RangeVisualizer rangeVisualizer;
+    private ShakeDrink shakeDrink;
 
     public bool isDashing = false;                      // 대쉬
     public bool isInvincible = false;                   // 무적
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody>();
         visualizer = GetComponent<GizmoVisualizer>();
         rangeVisualizer = GetComponent<RangeVisualizer>();
+        shakeDrink = GetComponent<ShakeDrink>();
 
         // LineRenderer 초기화
         rangeVisualizer.CreateRangeVisualizer();
@@ -86,6 +88,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && !isDashing)
         {
             StartCoroutine(Dash());
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            shakeDrink.Shake();
         }
     }
 
