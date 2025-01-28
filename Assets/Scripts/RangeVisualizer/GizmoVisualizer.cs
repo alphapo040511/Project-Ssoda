@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class GizmoVisualizer : MonoBehaviour
 {
-    private PlayerController controller;
+    private PlayerAttack controller;
     public AttackType gizmoAttackType = AttackType.NormalAtk; // Gizmo로 표시할 공격 타입
 
     private void Awake()
     {
-        controller = GetComponent<PlayerController>();
+        controller = GetComponent<PlayerAttack>();
     }
 
     private void OnDrawGizmos()
     {
         if (controller == null)
         {
-            controller = GetComponent<PlayerController>();
+            controller = GetComponent<PlayerAttack>();
         }
 
         if (controller.attackStatusDict == null) return;
