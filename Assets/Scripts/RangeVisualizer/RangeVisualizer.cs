@@ -4,6 +4,7 @@ public class RangeVisualizer : MonoBehaviour
 {
     private LineRenderer rangeLineRenderer;
     private PlayerController controller;
+    private PlayerAttack attack;
     public AttackType visualizerAttackType = AttackType.NormalAtk;
 
     private void Awake()
@@ -13,6 +14,13 @@ public class RangeVisualizer : MonoBehaviour
         if (controller == null)
         {
             controller = GetComponentInParent<PlayerController>();
+        }
+
+        attack = GetComponent<PlayerAttack>();
+
+        if (controller == null)
+        {
+            attack = GetComponentInParent<PlayerAttack>();
         }
 
         CreateRangeVisualizer();
@@ -27,9 +35,9 @@ public class RangeVisualizer : MonoBehaviour
         }
 
         // 지정된 공격 타입의 데이터 가져오기
-        if (controller.attackStatusDict != null && controller.attackStatusDict.ContainsKey(visualizerAttackType))
+        if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(visualizerAttackType))
         {
-            AttackStateData attackData = controller.attackStatusDict[visualizerAttackType];
+            AttackStateData attackData = attack.attackStatusDict[visualizerAttackType];
 
             rangeLineRenderer.startWidth = attackData.projectileThickness;
             rangeLineRenderer.endWidth = attackData.projectileThickness;
@@ -46,14 +54,14 @@ public class RangeVisualizer : MonoBehaviour
 
     public void UpdateRangeVisualizer()
     {
-        if (rangeLineRenderer != null && controller.projectileSpawnPoint != null)
+        if (rangeLineRenderer != null && attack.projectileSpawnPoint != null)
         {
             // 지정된 공격 타입의 데이터 가져오기
-            if (controller.attackStatusDict != null && controller.attackStatusDict.ContainsKey(visualizerAttackType))
+            if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(visualizerAttackType))
             {
-                AttackStateData attackData = controller.attackStatusDict[visualizerAttackType];
+                AttackStateData attackData = attack.attackStatusDict[visualizerAttackType];
 
-                Vector3 start = controller.projectileSpawnPoint.position;
+                Vector3 start = attack.projectileSpawnPoint.position;
                 Vector3 end = start + controller.transform.forward * attackData.atkRange;
 
                 rangeLineRenderer.SetPosition(0, start);
