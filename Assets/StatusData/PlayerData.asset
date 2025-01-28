@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3553678b544654da95ba57685079b3, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
+  MaxAmmo: 1000
   HealthPoint: 1000
   AttackPower: 100
   AttackSpeed: 2

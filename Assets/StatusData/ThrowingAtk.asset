@@ -16,6 +16,6 @@ MonoBehaviour:
   atkCooldown: 0.3
   atkRange: 15
   projectileThickness: 2
-  lastAttackTime: 0
   projectileSpeed: 10
   projectileLifetime: 5
+  ammo: 0
