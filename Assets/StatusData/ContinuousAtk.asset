@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cd541b02ad557a47b88276bf26fe67b, type: 3}
+  m_Name: ContinuousAtk
+  m_EditorClassIdentifier: 
+  attackType: 4
+  atkCooldown: 3
+  atkRange: 8
+  projectileThickness: 0.8
+  lastAttackTime: 0
+  projectileSpeed: 10
+  projectileLifetime: 5

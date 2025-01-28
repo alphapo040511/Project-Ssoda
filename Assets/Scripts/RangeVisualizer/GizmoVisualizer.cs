@@ -3,6 +3,7 @@ using UnityEngine;
 public class GizmoVisualizer : MonoBehaviour
 {
     private PlayerController controller;
+    public AttackType gizmoAttackType = AttackType.NormalAtk; // Gizmo로 표시할 공격 타입
 
     private void Awake()
     {
@@ -16,18 +17,26 @@ public class GizmoVisualizer : MonoBehaviour
             controller = GetComponent<PlayerController>();
         }
 
-        if (controller.projectileSpawnPoint == null || controller.attackStatus == null) return;
+        if (controller.attackStatusDict == null) return;
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(controller.projectileSpawnPoint.position, controller.attackStatus.atkRange);
+        foreach (var attackType in controller.attackStatusDict.Keys)
+        {
+            AttackStateData attackData = controller.attackStatusDict[attackType];
 
-        Gizmos.color = Color.blue;
-        Vector3 start = controller.projectileSpawnPoint.position;
-        Vector3 end = start + transform.forward * controller.attackStatus.atkRange;
+            if (controller.projectileSpawnPoint == null || attackData == null) continue;
 
-        Gizmos.DrawLine(start, end);
-        Gizmos.DrawWireSphere(start, controller.attackStatus.projectileThickness / 2);
-        Gizmos.DrawWireSphere(end, controller.attackStatus.projectileThickness / 2);
+            // Gizmo 색상 구분
+            Gizmos.color = attackType == AttackType.NormalAtk ? Color.red : Color.green;
+
+            // Gizmo 그리기
+            Gizmos.DrawWireSphere(controller.projectileSpawnPoint.position, attackData.atkRange);
+
+            Vector3 start = controller.projectileSpawnPoint.position;
+            Vector3 end = start + transform.forward * attackData.atkRange;
+
+            Gizmos.DrawLine(start, end);
+            Gizmos.DrawWireSphere(start, attackData.projectileThickness / 2);
+            Gizmos.DrawWireSphere(end, attackData.projectileThickness / 2);
+        }
     }
-
 }

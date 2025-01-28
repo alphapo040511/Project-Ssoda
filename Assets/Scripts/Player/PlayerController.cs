@@ -1,24 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
     public PlayerStatusData playerStatus;
-    public AttackStateData attackStatus;
     public PlayerInput playerInput;
+
+    public List<AttackStateContainer> attackStates = new List<AttackStateContainer>();
+    public Dictionary<AttackType, AttackStateData> attackStatusDict;
+    private Dictionary<AttackType, float> lastAttackTimeDict = new Dictionary<AttackType, float>();
 
     private Rigidbody playerRigidbody;
     private GizmoVisualizer visualizer;
     private RangeVisualizer rangeVisualizer;
 
-    public bool isDashing = false;              // 대쉬
-    public bool isInvincible = false;           // 무적
+    public bool isDashing = false;                      // 대쉬
+    public bool isInvincible = false;                   // 무적
     public bool isRangeVisualizerActive = false;
 
     [Header("Player Bullet")]
-    public GameObject projectilePrefab;         // 발사체 프리팹
-    public Transform projectileSpawnPoint;      // 발사체 생성 위치
+    public GameObject projectilePrefab;                 // 발사체 프리팹
+    public Transform projectileSpawnPoint;              // 발사체 생성 위치
 
     private void Start()
     {
@@ -30,6 +34,18 @@ public class PlayerController : MonoBehaviour
         // LineRenderer 초기화
         rangeVisualizer.CreateRangeVisualizer();
         rangeVisualizer.ToggleRangeVisualizer(false);
+
+        // 딕셔너리 초기화
+        attackStatusDict = attackStates.ToDictionary(
+            item => item.type,
+            item => item.data
+        );
+
+        // 공격 타입별 마지막 공격 시간 초기화
+        foreach (var attackType in attackStatusDict.Keys)
+        {
+            lastAttackTimeDict[attackType] = 0f;
+        }
     }
 
     private void FixedUpdate()
@@ -42,18 +58,18 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (playerStatus == null || attackStatus == null) return;
+        if (playerStatus == null) return;
 
-        // 공격 속도 적용
-        attackStatus.atkCooldown = 1f / playerStatus.AttackSpeed;
+        // 모든 공격 타입의 쿨다운을 업데이트
+        foreach (var attackType in attackStatusDict.Keys)
+        {
+            AttackStateData data = attackStatusDict[attackType];
+            data.atkCooldown = 1f / playerStatus.AttackSpeed;       // 플레이어 스탯 반영
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (Time.time >= attackStatus.lastAttackTime + attackStatus.atkCooldown)
-            {
-                AttackAtMouseDirection();
-                attackStatus.lastAttackTime = Time.time;
-            }
+            TryExecuteAttack(AttackType.NormalAtk);
         }
 
         // CapsLock 키 입력 감지로 토글
@@ -142,7 +158,35 @@ public class PlayerController : MonoBehaviour
         isInvincible = false;
     }
 
-    private void AttackAtMouseDirection()
+    private void TryExecuteAttack(AttackType attackType)
+    {
+        if (!attackStatusDict.ContainsKey(attackType)) return;
+
+        AttackStateData data = attackStatusDict[attackType];
+        float lastAttackTime = lastAttackTimeDict.ContainsKey(attackType) ? lastAttackTimeDict[attackType] : 0f;
+
+        if (Time.time >= lastAttackTime + data.atkCooldown)
+        {
+            ExecuteAttack(attackType);
+            lastAttackTimeDict[attackType] = Time.time;
+        }
+    }
+
+    public void ExecuteAttack(AttackType attackType)
+    {
+        if (attackStatusDict.TryGetValue(attackType, out AttackStateData data))
+        {
+            // 실제 공격 로직 (발사체 생성 등)
+            AttackAtMouseDirection(data); // 데이터 전달
+            Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
+        }
+        else
+        {
+            Debug.LogError($"Attack {attackType} not found!");
+        }
+    }
+
+    private void AttackAtMouseDirection(AttackStateData data)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hitInfo))
@@ -152,33 +196,33 @@ public class PlayerController : MonoBehaviour
 
             Vector3 direction = (targetPosition - projectileSpawnPoint.position).normalized;
 
-            // 공격 방향으로 범위 시각화 업데이트
-            rangeVisualizer.UpdateRangeVisualizer();
-
-            GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
+            // 발사체 생성
+            GameObject projectile = Instantiate(
+                projectilePrefab,
+                projectileSpawnPoint.position,
+                Quaternion.LookRotation(direction)
+            );
 
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
             if (projectileRb != null)
             {
-                projectileRb.velocity = direction * attackStatus.projectileSpeed;
-
-                // 발사체와 캐릭터의 충돌 방지
+                // ScriptableObject의 데이터 사용
+                projectileRb.velocity = direction * data.projectileSpeed;
                 Physics.IgnoreCollision(projectile.GetComponent<Collider>(), GetComponent<Collider>());
             }
 
-            StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position));
+            // 발사체 제거 코루틴 (데이터 전달)
+            StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position, data.atkRange));
         }
     }
 
-    private IEnumerator DestroyProjectileAfterRange(GameObject projectile, Vector3 startPosition)
+    private IEnumerator DestroyProjectileAfterRange(GameObject projectile, Vector3 startPosition, float range)
     {
         float distanceTraveled = 0f;
 
-        while (distanceTraveled < attackStatus.atkRange)
+        while (distanceTraveled < range)
         {
-            if (projectile == null)
-                yield break;
-
+            if (projectile == null) yield break;
             distanceTraveled = Vector3.Distance(startPosition, projectile.transform.position);
             yield return null;
         }

@@ -1344,8 +1344,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStatus: {fileID: 11400000, guid: 8d0915addd7c7134d811de53fff1694a, type: 2}
-  attackStatus: {fileID: 11400000, guid: 5219bad2baff02b489c4b19f3c61260d, type: 2}
   playerInput: {fileID: 0}
+  attackStates:
+  - type: 0
+    data: {fileID: 11400000, guid: 5219bad2baff02b489c4b19f3c61260d, type: 2}
+  - type: 1
+    data: {fileID: 11400000, guid: fe35e993f323906479dbb1622659f0a2, type: 2}
+  - type: 2
+    data: {fileID: 11400000, guid: 6517b3b63c9034943a53629ca4517861, type: 2}
+  - type: 3
+    data: {fileID: 11400000, guid: bf09284e01904f24d87b5fe5d8208791, type: 2}
+  - type: 4
+    data: {fileID: 11400000, guid: 122ea187f45160c4da4495bcfc35f289, type: 2}
+  - type: 5
+    data: {fileID: 11400000, guid: 10e89ba2c5a4110498b3d403b8a8aeef, type: 2}
   isDashing: 0
   isInvincible: 0
   isRangeVisualizerActive: 0
@@ -1432,6 +1444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f4b506383b1f94bb0621edb0835247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualizerAttackType: 0
 --- !u!114 &2094186988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1444,6 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15c28e1a11c054409a07ad75d5ed7b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gizmoAttackType: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

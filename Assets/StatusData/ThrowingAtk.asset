@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5cd541b02ad557a47b88276bf26fe67b, type: 3}
-  m_Name: NomalAtk
+  m_Name: ThrowingAtk
   m_EditorClassIdentifier: 
-  atkCooldown: 0.5
-  atkRange: 10
-  projectileThickness: 0.8
+  attackType: 1
+  atkCooldown: 0.3
+  atkRange: 15
+  projectileThickness: 2
   lastAttackTime: 0
   projectileSpeed: 10
   projectileLifetime: 5
