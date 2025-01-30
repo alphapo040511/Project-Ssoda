@@ -10,6 +10,7 @@ public class EnemyBase : MonoBehaviour
     private int currentHealth;
     private Animator animator;
     private bool isDead = false;
+    private bool isActive = false;  // 플레이어가 방에 입장 했는지/안 했는지에 따른 몬스터 활성화 여부
 
     // 몬스터 상태 (대기, 이동, 공격, 피격, 사망)
     protected enum EnemyState
@@ -20,7 +21,7 @@ public class EnemyBase : MonoBehaviour
         Damaged,
         Dead
     }
-    protected EnemyState currentState;
+    protected EnemyState currentState = EnemyState.Idle;
 
     // 초기화 및 데이터 설정
     protected virtual void Start()
@@ -35,15 +36,26 @@ public class EnemyBase : MonoBehaviour
                 animator.runtimeAnimatorController = enemyData.animatorController;
             }
         }
+
+        // 처음엔 비활성화 상태 (AI 작동 X, 이동 X)
+        gameObject.SetActive(false);
     }
 
     // 업데이트 처리
     protected virtual void Update()
     {
-        if (isDead)     // 방에 입장하지 않았을때도 리턴하도록 나중에 수정 필요 <<<<<<<<<<
+        if (!isActive || isDead)
             return;
 
         HandleEnemyBehavior();
+    }
+
+    // 전투 시작 시 활성화
+    public void ActivateEnemy()
+    {
+        gameObject.SetActive(true); // 몬스터 활성화
+        isActive = true;
+        currentState = EnemyState.Idle;
     }
 
     // 몬스터의 행동을 처리하는 기본적인 함수
@@ -87,7 +99,6 @@ public class EnemyBase : MonoBehaviour
         }
         else
         {
-            // 피격 상태로 변경
             currentState = EnemyState.Damaged;
         }
     }
@@ -101,6 +112,13 @@ public class EnemyBase : MonoBehaviour
         if (animator != null)
         {
             animator.SetTrigger("Die");
+        }
+
+        // 현재 몬스터가 속한 방에 사망 알림
+        BattleRoom room = GetComponentInParent<BattleRoom>();
+        if (room != null)
+        {
+            room.EnemyDefeated(this);
         }
     }
 
