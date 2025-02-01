@@ -135,16 +135,43 @@ public class PlayerController : MonoBehaviour
 
         while (elapsedTime < playerStatus.dashDuration)
         {
-            playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
+            // 이동 가능한지 체크
+            if (CanMoveToPosition(targetPosition))
+            {
+                playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
+            }
+            else
+            {
+                Debug.Log("벽에 막혀 대시를 중단합니다.");
+                break;
+            }
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        playerRigidbody.MovePosition(targetPosition);
 
         isDashing = false;
 
         yield return new WaitForSeconds(0.2f); // 0.2초 무적 유지
         isInvincible = false;
+    }
+
+    private bool CanMoveToPosition(Vector3 targetPosition)
+    {
+        // 현재 위치에서 목표 위치로의 방향과 거리 계산
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, targetPosition);
+
+        // 레이캐스트를 사용하여 충돌 체크
+        Ray ray = new Ray(transform.position, direction);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, distance))
+        {
+            if (hitInfo.collider.CompareTag("Wall"))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
