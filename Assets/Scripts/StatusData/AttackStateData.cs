@@ -17,6 +17,8 @@ public class AttackStateData : ScriptableObject
 {
     public AttackType attackType;           // 공격 타입
     public float atkCooldown;               // 공격 속도 (초당)
+    public float attackPower;               // 공격력
+    public int ammoCost;                    // 탄약 소모량
     public float atkRange;                  // 사거리
     public float projectileThickness;       // 발사체 두께
     public float projectileSpeed;           // 발사체 속도

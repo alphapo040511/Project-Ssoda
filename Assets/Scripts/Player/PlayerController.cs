@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
     private PlayerAttack playerAttack;
     private GizmoVisualizer visualizer;
     private RangeVisualizer rangeVisualizer;
-    
+    private PlayerReload playerReload;
+
     public bool isDashing = false;                      // 대쉬
     public bool isInvincible = false;                   // 무적
     public bool isRangeVisualizerActive = false;
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour
         rangeVisualizer = GetComponent<RangeVisualizer>();
         shakeDrink = GetComponent<ShakeDrink>();
         playerAttack = GetComponent<PlayerAttack>();
+        playerReload = GetComponent<PlayerReload>();
 
         // LineRenderer 초기화
         rangeVisualizer.CreateRangeVisualizer();
@@ -45,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            // 일단은 하드코딩 해놨음 나중에 무기타입에 따라 바뀌게 수정예정
             playerAttack.TryExecuteAttack(AttackType.NormalAtk);
         }
 
@@ -67,6 +70,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             shakeDrink.Shake();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            playerReload?.Reload();
         }
     }
 

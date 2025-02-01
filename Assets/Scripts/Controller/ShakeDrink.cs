@@ -3,14 +3,29 @@ using UnityEngine;
 
 public class ShakeDrink : MonoBehaviour
 {
+    private PlayerReload playerReload;
+    private PlayerAttack playerAttack;
+
     private bool isShaking = false;
     private float shakeDuration = 10f;
+
+    private void Start()
+    {
+        playerReload = GetComponent<PlayerReload>();
+        playerAttack = GetComponent<PlayerAttack>();
+    }
 
     public void Shake()
     {
         if (isShaking)
         {
             Debug.Log("이미 음료를 흔들고 있습니다!");
+            return;
+        }
+
+        if (playerReload != null && playerAttack != null && !playerReload.UseAmmo(AttackType.NormalAtk, playerAttack.attackStatusDict))
+        {
+            Debug.Log("탄약이 없습니다! 재장전하세요.");
             return;
         }
 

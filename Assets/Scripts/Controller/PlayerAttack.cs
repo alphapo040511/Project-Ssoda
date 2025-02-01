@@ -15,6 +15,8 @@ public class PlayerAttack : MonoBehaviour
     public Dictionary<AttackType, AttackStateData> attackStatusDict;
     private Dictionary<AttackType, float> lastAttackTimeDict = new Dictionary<AttackType, float>();
 
+    private PlayerReload playerReload;
+
     private void Start()
     {
         // 딕셔너리 초기화
@@ -28,11 +30,12 @@ public class PlayerAttack : MonoBehaviour
         {
             lastAttackTimeDict[attackType] = 0f;
         }
+
+        playerReload = GetComponent<PlayerReload>();
     }
 
     private void Update()
     {
-        // 모든 공격 타입의 쿨다운을 업데이트
         foreach (var attackType in attackStatusDict.Keys)
         {
             AttackStateData data = attackStatusDict[attackType];
@@ -52,6 +55,13 @@ public class PlayerAttack : MonoBehaviour
     public void TryExecuteAttack(AttackType attackType)
     {
         if (!attackStatusDict.ContainsKey(attackType)) return;
+
+        // 탄약 확인
+        if (playerReload != null && !playerReload.UseAmmo(attackType, attackStatusDict))
+        {
+            Debug.Log("탄약이 없습니다! 재장전하세요.");
+            return;
+        }
 
         AttackStateData data = attackStatusDict[attackType];
         float lastAttackTime = lastAttackTimeDict.ContainsKey(attackType) ? lastAttackTimeDict[attackType] : 0f;

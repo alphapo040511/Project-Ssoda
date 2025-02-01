@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackType: 5
   atkCooldown: 0.5
+  attackPower: 300
+  ammoCost: 100
   atkRange: 10
   projectileThickness: 0.8
-  lastAttackTime: 0
   projectileSpeed: 10
   projectileLifetime: 5
