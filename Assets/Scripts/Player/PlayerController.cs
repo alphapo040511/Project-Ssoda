@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     private RangeVisualizer rangeVisualizer;
     private PlayerReload playerReload;
 
+    private float lastDashTime = -Mathf.Infinity;       // 마지막 대시 시간
+
     public bool isDashing = false;                      // 대쉬
     public bool isInvincible = false;                   // 무적
     public bool isRangeVisualizerActive = false;
@@ -63,7 +65,7 @@ public class PlayerController : MonoBehaviour
             rangeVisualizer.UpdateRangeVisualizer();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !isDashing)
+        if (Input.GetKeyDown(KeyCode.Space) && !isDashing && Time.time >= lastDashTime + playerStatus.dashCooldown)
         {
             StartCoroutine(Dash());
         }
@@ -126,6 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         isDashing = true;
         isInvincible = true;
+        lastDashTime = Time.time; // 대시 시작 시간 기록
 
         Vector3 dashDirection = transform.forward;
         Vector3 startPosition = transform.position;
@@ -135,25 +138,21 @@ public class PlayerController : MonoBehaviour
 
         while (elapsedTime < playerStatus.dashDuration)
         {
-            // 이동 가능한지 체크
-            if (CanMoveToPosition(targetPosition))
-            {
-                playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
-            }
-            else
-            {
-                Debug.Log("벽에 막혀 대시를 중단합니다.");
-                break;
-            }
+            if (CanMoveToPosition(dashDirection)) break;
+
+            playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
 
             elapsedTime += Time.deltaTime;
+
             yield return null;
         }
 
         isDashing = false;
 
-        yield return new WaitForSeconds(0.2f); // 0.2초 무적 유지
+        yield return new WaitForSeconds(0.2f); // 무적 시간
         isInvincible = false;
+
+        yield return new WaitForSeconds(playerStatus.dashCooldown - 0.2f); // 쿨다운 완료 대기
     }
 
     private bool CanMoveToPosition(Vector3 targetPosition)
