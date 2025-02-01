@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Player")]
     public PlayerStatusData playerStatus;
     public PlayerInput playerInput;
 
@@ -47,8 +48,8 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            // 일단은 하드코딩 해놨음 나중에 무기타입에 따라 바뀌게 수정예정
-            playerAttack.TryExecuteAttack(AttackType.NormalAtk);
+            // 현재 선택된 무기 타입으로 공격
+            playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
         }
 
         // CapsLock 키 입력 감지로 토글

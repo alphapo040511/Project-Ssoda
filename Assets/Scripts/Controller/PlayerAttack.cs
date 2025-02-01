@@ -17,6 +17,10 @@ public class PlayerAttack : MonoBehaviour
 
     private PlayerReload playerReload;
 
+    // 핫바 슬롯
+    private AttackType[] hotbarSlots = new AttackType[6];
+    private int currentSlotIndex = 0; // 현재 선택된 슬롯 인덱스
+
     private void Start()
     {
         // 딕셔너리 초기화
@@ -32,24 +36,90 @@ public class PlayerAttack : MonoBehaviour
         }
 
         playerReload = GetComponent<PlayerReload>();
+
+        // 핫바 슬롯 초기화
+        InitializeHotbar();
+    }
+
+    private void InitializeHotbar()
+    {
+        // 기본 공격 슬롯
+        hotbarSlots[0] = AttackType.NormalAtk;
+        hotbarSlots[1] = AttackType.MeleeAtk;
+        hotbarSlots[2] = AttackType.ThrowingAtk;
+
+        // 추가 공격 슬롯
+        hotbarSlots[3] = AttackType.SprayAtk;
+        hotbarSlots[4] = AttackType.ContinuousAtk;
+        hotbarSlots[5] = AttackType.RangedAtk;
     }
 
     private void Update()
     {
+        // 공격 속도 업데이트
         foreach (var attackType in attackStatusDict.Keys)
         {
             AttackStateData data = attackStatusDict[attackType];
-            data.atkCooldown = 1f / playerStatus.AttackSpeed;       // 플레이어 스탯 반영
+            data.atkCooldown = 1f / playerStatus.AttackSpeed;
+        }
+
+        // 무기 변경 입력 처리
+        HandleWeaponSwitch();
+
+        // 공격 입력 처리
+        if (Input.GetMouseButtonDown(0))
+        {
+            TryExecuteAttack(hotbarSlots[currentSlotIndex]);
         }
     }
 
-    public void Initialize(List<AttackStateContainer> attackStates)
+    public AttackType GetCurrentWeaponType()
     {
-        attackStatusDict = attackStates.ToDictionary(item => item.type, item => item.data);
-        foreach (var attackType in attackStatusDict.Keys)
+        return hotbarSlots[currentSlotIndex];
+    }
+
+    private void HandleWeaponSwitch()
+    {
+        // Q/E 키로 4, 5, 6번 슬롯 순환
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            lastAttackTimeDict[attackType] = 0f;
+            SwitchHotbarLeft();
         }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            SwitchHotbarRight();
+        }
+
+        // 휠 스크롤로 슬롯 변경
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll > 0)
+        {
+            SwitchHotbarLeft(); // 휠 올림: 왼쪽으로 이동
+        }
+        else if (scroll < 0)
+        {
+            SwitchHotbarRight(); // 휠 내림: 오른쪽으로 이동
+        }
+    }
+
+    private void SwitchHotbarLeft()
+    {
+        currentSlotIndex--;
+        if (currentSlotIndex < 0)
+        {
+            currentSlotIndex = hotbarSlots.Length - 1; // 맨 끝으로 순환
+        }
+        Debug.Log($"현재 선택된 슬롯: {currentSlotIndex + 1} ({hotbarSlots[currentSlotIndex]})");
+    }
+
+    private void SwitchHotbarRight()
+    {
+        currentSlotIndex++;
+        if (currentSlotIndex >= hotbarSlots.Length)
+        {
+            currentSlotIndex = 0; // 맨 앞으로 순환
+        }
+        Debug.Log($"현재 선택된 슬롯: {currentSlotIndex + 1} ({hotbarSlots[currentSlotIndex]})");
     }
 
     public void TryExecuteAttack(AttackType attackType)
