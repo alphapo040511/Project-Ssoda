@@ -14,6 +14,7 @@ public class PlayerAttack : MonoBehaviour
     public List<AttackStateContainer> attackStates = new List<AttackStateContainer>();
     public Dictionary<AttackType, AttackStateData> attackStatusDict;
     private Dictionary<AttackType, float> lastAttackTimeDict = new Dictionary<AttackType, float>();
+    public AttackType currentWeaponType; // 현재 무기 타입
 
     private PlayerReload playerReload;
 
@@ -39,6 +40,9 @@ public class PlayerAttack : MonoBehaviour
 
         // 핫바 슬롯 초기화
         InitializeHotbar();
+
+        // 현재 무기 타입 초기화
+        currentWeaponType = hotbarSlots[currentSlotIndex];
     }
 
     private void InitializeHotbar()
@@ -60,7 +64,6 @@ public class PlayerAttack : MonoBehaviour
         foreach (var attackType in attackStatusDict.Keys)
         {
             AttackStateData data = attackStatusDict[attackType];
-            data.atkCooldown = 1f / playerStatus.AttackSpeed;
         }
 
         // 무기 변경 입력 처리
@@ -102,6 +105,7 @@ public class PlayerAttack : MonoBehaviour
         {
             currentSlotIndex = hotbarSlots.Length - 1; // 맨 끝으로 순환
         }
+        UpdateCurrentWeaponType();
         Debug.Log($"현재 선택된 슬롯: {currentSlotIndex + 1} ({hotbarSlots[currentSlotIndex]})");
     }
 
@@ -112,7 +116,15 @@ public class PlayerAttack : MonoBehaviour
         {
             currentSlotIndex = 0; // 맨 앞으로 순환
         }
+        UpdateCurrentWeaponType();
         Debug.Log($"현재 선택된 슬롯: {currentSlotIndex + 1} ({hotbarSlots[currentSlotIndex]})");
+    }
+
+    private void UpdateCurrentWeaponType()
+    {
+        // 현재 무기 타입 업데이트
+        currentWeaponType = hotbarSlots[currentSlotIndex];
+        Debug.Log($"현재 무기 타입: {currentWeaponType}");
     }
 
     public void TryExecuteAttack(AttackType attackType)

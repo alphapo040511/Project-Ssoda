@@ -29,7 +29,7 @@ public class ShakeDrink : MonoBehaviour
         isShaking = true;
         Debug.Log("음료를 흔들어 공격 방식을 강화합니다!");
 
-        // 현재 들고 있는 음료의 공격 타입에 따라 스탯 강화
+        // 현재 들고 있는 무기의 공격 타입만 강화
         EnhanceAttackStats();
 
         float elapsedTime = 0f;
@@ -52,40 +52,41 @@ public class ShakeDrink : MonoBehaviour
     {
         if (playerAttack == null || playerAttack.attackStatusDict == null) return;
 
-        // 현재 들고 있는 음료의 공격 타입에 따라 스탯 강화
-        foreach (var attackType in playerAttack.attackStatusDict.Keys)
+        // 현재 들고 있는 무기의 공격 타입만 강화
+        AttackType currentWeaponType = playerAttack.currentWeaponType;
+        if (playerAttack.attackStatusDict.ContainsKey(currentWeaponType))
         {
-            AttackStateData data = playerAttack.attackStatusDict[attackType];
+            AttackStateData data = playerAttack.attackStatusDict[currentWeaponType];
 
-            switch (attackType)
+            switch (currentWeaponType)
             {
                 case AttackType.NormalAtk:
-                    data.ammoCost = 55;                                       // 흔들었을 때 음료 소비량: 55ml
-                    data.attackPower *= 1.1667f;                              // 흔들었을 때 데미지 계수: 175%
+                    data.ammoCost = 55;                                         // 흔들었을 때 음료 소비량: 55ml
+                    data.attackPower *= 1.1667f;                                // 흔들었을 때 데미지 계수: 175%
                     break;
 
                 case AttackType.ThrowingAtk:
-                    data.attackPower = 100f + (data.attackPower * 0.03f);   // 흔들었을 때 고정 100 + 남은 음료 1ml 당 3%
-                    data.atkRange = 4f;                                     // 흔들었을 때 범위 (반지름): 4
+                    data.attackPower = 100f + (data.attackPower * 0.03f);       // 흔들었을 때 고정 100 + 남은 음료 1ml 당 3%
+                    data.projectileThickness = 4f;                              // 흔들었을 때 범위 (반지름): 4
                     break;
 
                 case AttackType.SprayAtk:
-                    data.ammoCost = 25;                                      // 흔들었을 때 음료 소비량: 25ml (틱 당)
-                    data.attackPower *= 1.25f;                               // 흔들었을 때 데미지 계수: 50% (틱 당)
+                    data.ammoCost = 25;                                         // 흔들었을 때 음료 소비량: 25ml (틱 당)
+                    data.attackPower *= 1.25f;                                  // 흔들었을 때 데미지 계수: 50% (틱 당)
                     break;
 
                 case AttackType.ContinuousAtk:
-                    data.ammoCost = 25;                                      // 흔들었을 때 음료 소비량: 25ml (틱 당)
-                    data.attackPower *= 1.25f;                               // 흔들었을 때 데미지 계수: 50% (틱 당)
+                    data.ammoCost = 25;                                         // 흔들었을 때 음료 소비량: 25ml (틱 당)
+                    data.attackPower *= 1.25f;                                  // 흔들었을 때 데미지 계수: 50% (틱 당)
                     break;
 
                 case AttackType.RangedAtk:
-                    data.ammoCost = 110;                                     // 흔들었을 때 음료 소비량: 110ml (발 당)
-                    data.attackPower *= 1.1667f;                             // 흔들었을 때 데미지 계수: 350% (발 당)
+                    data.ammoCost = 110;                                        // 흔들었을 때 음료 소비량: 110ml (발 당)
+                    data.attackPower *= 1.1667f;                                // 흔들었을 때 데미지 계수: 350% (발 당)
                     break;
             }
 
-            Debug.Log($"{attackType} 강화 완료: 탄약 소비량={data.ammoCost}, 데미지={data.attackPower}");
+            Debug.Log($"{currentWeaponType} 강화 완료: 탄약 소비량={data.ammoCost}, 데미지={data.attackPower}");
         }
     }
 
@@ -93,40 +94,41 @@ public class ShakeDrink : MonoBehaviour
     {
         if (playerAttack == null || playerAttack.attackStatusDict == null) return;
 
-        // 강화된 스탯을 원래 값으로 복원
-        foreach (var attackType in playerAttack.attackStatusDict.Keys)
+        // 현재 들고 있는 무기의 공격 타입만 복원
+        AttackType currentWeaponType = playerAttack.currentWeaponType;
+        if (playerAttack.attackStatusDict.ContainsKey(currentWeaponType))
         {
-            AttackStateData data = playerAttack.attackStatusDict[attackType];
+            AttackStateData data = playerAttack.attackStatusDict[currentWeaponType];
 
-            switch (attackType)
+            switch (currentWeaponType)
             {
                 case AttackType.NormalAtk:
-                    data.ammoCost = 50;                                     // 원래 음료 소비량: 50ml
-                    data.attackPower /= 1.1667f;                              // 원래 데미지 계수: 150%
+                    data.ammoCost = 50;                                         // 원래 음료 소비량: 50ml
+                    data.attackPower /= 1.1667f;                                // 원래 데미지 계수: 150%
                     break;
 
                 case AttackType.ThrowingAtk:
-                    data.attackPower = (data.attackPower - 100f) / 0.03f;   // 원래 고정 100 + 남은 음료 1ml 당 2.5%
-                    data.atkRange = 3f;                                     // 원래 범위 (반지름): 3
-                    break;
+                    data.attackPower = (data.attackPower - 100f) / 0.03f;       // 원래 고정 100 + 남은 음료 1ml 당 2.5%
+                    data.projectileThickness = 3f;                              // 원래 범위 (반지름): 3
+                    break;  
 
                 case AttackType.SprayAtk:
-                    data.ammoCost = 20;                                     // 원래 음료 소비량: 20ml (틱 당)
-                    data.attackPower /= 1.25f;                               // 원래 데미지 계수: 40% (틱 당)
+                    data.ammoCost = 20;                                         // 원래 음료 소비량: 20ml (틱 당)
+                    data.attackPower /= 1.25f;                                  // 원래 데미지 계수: 40% (틱 당)
                     break;
 
                 case AttackType.ContinuousAtk:
-                    data.ammoCost = 20;                                     // 원래 음료 소비량: 20ml (틱 당)
-                    data.attackPower /= 1.25f;                               // 원래 데미지 계수: 40% (틱 당)
+                    data.ammoCost = 20;                                         // 원래 음료 소비량: 20ml (틱 당)
+                    data.attackPower /= 1.25f;                                  // 원래 데미지 계수: 40% (틱 당)
                     break;
 
                 case AttackType.RangedAtk:
-                    data.ammoCost = 100;                                    // 원래 음료 소비량: 100ml (발 당)
-                    data.attackPower /= 1.1667f;                               // 원래 데미지 계수: 300% (발 당)
+                    data.ammoCost = 100;                                        // 원래 음료 소비량: 100ml (발 당)
+                    data.attackPower /= 1.1667f;                                // 원래 데미지 계수: 300% (발 당)
                     break;
             }
 
-            Debug.Log($"{attackType} 스탯 복원: 탄약 소비량={data.ammoCost}, 데미지={data.attackPower}");
+            Debug.Log($"{currentWeaponType} 스탯 복원: 탄약 소비량={data.ammoCost}, 데미지={data.attackPower}");
         }
     }
 }

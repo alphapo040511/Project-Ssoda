@@ -7,8 +7,6 @@ public class PlayerStatusData : ScriptableObject
 {
     public int MaxAmmo;             // 총용량
     public float HealthPoint;       // 체력
-    public float AttackPower;       // 공격력
-    public float AttackSpeed;       // 공격 속도
     public float CritChance;        // 치명타 확률
     public float CritDamage;        // 치명타 피해량
     public float MoveSpeed;         // 이동 속도
