@@ -3,13 +3,14 @@ using System.Collections;
 
 public class ShakeDrink : MonoBehaviour
 {
-    private bool isShaking = false; // 흔들기 중인지 여부
-    private float shakeDuration = 10f; // 강화 지속 시간 (10초)
-    private PlayerAttack playerAttack; // PlayerAttack 참조
+    private PlayerAttack playerAttack;
+
+    private bool isShaking = false;         // 흔들기 중인지 여부
+    private float shakeDuration = 10f;      // 강화 지속 시간 (10초)
 
     private void Start()
     {
-        playerAttack = GetComponent<PlayerAttack>(); // PlayerAttack 컴포넌트 가져오기
+        playerAttack = GetComponent<PlayerAttack>();
     }
 
     public void Shake()
@@ -20,7 +21,6 @@ public class ShakeDrink : MonoBehaviour
             return;
         }
 
-        // 음료 흔들기 시작
         StartCoroutine(ShakeCoroutine());
     }
 
@@ -42,7 +42,9 @@ public class ShakeDrink : MonoBehaviour
 
         // 강화 효과 종료
         ResetAttackStats();
+
         isShaking = false;
+
         Debug.Log("음료 효과가 종료되었습니다.");
     }
 
@@ -58,28 +60,28 @@ public class ShakeDrink : MonoBehaviour
             switch (attackType)
             {
                 case AttackType.NormalAtk:
-                    data.ammoCost = 55; // 흔들었을 때 음료 소비량: 55ml
-                    data.attackPower *= 1.75f; // 흔들었을 때 데미지 계수: 175%
+                    data.ammoCost = 55;                                     // 흔들었을 때 음료 소비량: 55ml
+                    data.attackPower *= 1.75f;                              // 흔들었을 때 데미지 계수: 175%
                     break;
 
                 case AttackType.ThrowingAtk:
-                    data.attackPower = 100f + (data.attackPower * 0.03f); // 흔들었을 때 고정 100 + 남은 음료 1ml 당 3%
-                    data.atkRange = 4f; // 흔들었을 때 범위 (반지름): 4
+                    data.attackPower = 100f + (data.attackPower * 0.03f);   // 흔들었을 때 고정 100 + 남은 음료 1ml 당 3%
+                    data.atkRange = 4f;                                     // 흔들었을 때 범위 (반지름): 4
                     break;
 
                 case AttackType.SprayAtk:
-                    data.ammoCost = 25; // 흔들었을 때 음료 소비량: 25ml (틱 당)
-                    data.attackPower *= 0.5f; // 흔들었을 때 데미지 계수: 50% (틱 당)
+                    data.ammoCost = 25;                                     // 흔들었을 때 음료 소비량: 25ml (틱 당)
+                    data.attackPower *= 0.5f;                               // 흔들었을 때 데미지 계수: 50% (틱 당)
                     break;
 
                 case AttackType.ContinuousAtk:
-                    data.ammoCost = 25; // 흔들었을 때 음료 소비량: 25ml (틱 당)
-                    data.attackPower *= 0.5f; // 흔들었을 때 데미지 계수: 50% (틱 당)
+                    data.ammoCost = 25;                                     // 흔들었을 때 음료 소비량: 25ml (틱 당)
+                    data.attackPower *= 0.5f;                               // 흔들었을 때 데미지 계수: 50% (틱 당)
                     break;
 
                 case AttackType.RangedAtk:
-                    data.ammoCost = 110; // 흔들었을 때 음료 소비량: 110ml (발 당)
-                    data.attackPower *= 3.5f; // 흔들었을 때 데미지 계수: 350% (발 당)
+                    data.ammoCost = 110;                                    // 흔들었을 때 음료 소비량: 110ml (발 당)
+                    data.attackPower *= 3.5f;                               // 흔들었을 때 데미지 계수: 350% (발 당)
                     break;
             }
 
@@ -99,28 +101,28 @@ public class ShakeDrink : MonoBehaviour
             switch (attackType)
             {
                 case AttackType.NormalAtk:
-                    data.ammoCost = 50; // 원래 음료 소비량: 50ml
-                    data.attackPower /= 1.75f; // 원래 데미지 계수: 150%
+                    data.ammoCost = 50;                                     // 원래 음료 소비량: 50ml
+                    data.attackPower /= 1.75f;                              // 원래 데미지 계수: 150%
                     break;
 
                 case AttackType.ThrowingAtk:
-                    data.attackPower = (data.attackPower - 100f) / 0.03f; // 원래 고정 100 + 남은 음료 1ml 당 2.5%
-                    data.atkRange = 3f; // 원래 범위 (반지름): 3
+                    data.attackPower = (data.attackPower - 100f) / 0.03f;   // 원래 고정 100 + 남은 음료 1ml 당 2.5%
+                    data.atkRange = 3f;                                     // 원래 범위 (반지름): 3
                     break;
 
                 case AttackType.SprayAtk:
-                    data.ammoCost = 20; // 원래 음료 소비량: 20ml (틱 당)
-                    data.attackPower /= 0.5f; // 원래 데미지 계수: 40% (틱 당)
+                    data.ammoCost = 20;                                     // 원래 음료 소비량: 20ml (틱 당)
+                    data.attackPower /= 0.5f;                               // 원래 데미지 계수: 40% (틱 당)
                     break;
 
                 case AttackType.ContinuousAtk:
-                    data.ammoCost = 20; // 원래 음료 소비량: 20ml (틱 당)
-                    data.attackPower /= 0.5f; // 원래 데미지 계수: 40% (틱 당)
+                    data.ammoCost = 20;                                     // 원래 음료 소비량: 20ml (틱 당)
+                    data.attackPower /= 0.5f;                               // 원래 데미지 계수: 40% (틱 당)
                     break;
 
                 case AttackType.RangedAtk:
-                    data.ammoCost = 100; // 원래 음료 소비량: 100ml (발 당)
-                    data.attackPower /= 3.5f; // 원래 데미지 계수: 300% (발 당)
+                    data.ammoCost = 100;                                    // 원래 음료 소비량: 100ml (발 당)
+                    data.attackPower /= 3.5f;                               // 원래 데미지 계수: 300% (발 당)
                     break;
             }
 
