@@ -7,7 +7,8 @@ public class EnemyBase : MonoBehaviour
     [Header("Enemy Data")]
     public EnemyData enemyData;  // 몬스터 타입 별 스크립터블 오브젝트
 
-    private int currentHealth;
+    public int currentHealth;
+    public BattleRoom room;            // 몬스터가 속한 방의 트리거
     private Animator animator;
     private bool isDead = false;
     private bool isActive = false;  // 플레이어가 방에 입장 했는지/안 했는지에 따른 몬스터 활성화 여부
@@ -46,6 +47,22 @@ public class EnemyBase : MonoBehaviour
     {
         if (!isActive || isDead)
             return;
+
+        // 테스트용 코드
+        if (isActive)
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = Color.red; // 빨간색으로 변경
+            }
+        }
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+        // 여기까지 테스트
 
         HandleEnemyBehavior();
     }
@@ -115,7 +132,6 @@ public class EnemyBase : MonoBehaviour
         }
 
         // 현재 몬스터가 속한 방에 사망 알림
-        BattleRoom room = GetComponentInParent<BattleRoom>();
         if (room != null)
         {
             room.EnemyDefeated(this);
@@ -131,5 +147,10 @@ public class EnemyBase : MonoBehaviour
         currentState = EnemyState.Attacking;
 
         // 공격 로직 추가해야함 일단 플레이어 공격부터
+    }
+
+    public void SetRoom(BattleRoom battleRoom)
+    {
+        room = battleRoom;
     }
 }
