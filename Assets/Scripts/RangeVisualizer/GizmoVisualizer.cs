@@ -3,7 +3,6 @@ using UnityEngine;
 public class GizmoVisualizer : MonoBehaviour
 {
     private PlayerAttack controller;
-    public AttackType gizmoAttackType = AttackType.NormalAtk; // Gizmo로 표시할 공격 타입
 
     private void Awake()
     {
@@ -26,7 +25,7 @@ public class GizmoVisualizer : MonoBehaviour
             if (controller.projectileSpawnPoint == null || attackData == null) continue;
 
             // Gizmo 색상 구분
-            Gizmos.color = attackType == AttackType.NormalAtk ? Color.red : Color.green;
+            Gizmos.color = attackType == controller.GetCurrentWeaponType() ? Color.red : Color.green;
 
             // Gizmo 그리기
             Gizmos.DrawWireSphere(controller.projectileSpawnPoint.position, attackData.atkRange);

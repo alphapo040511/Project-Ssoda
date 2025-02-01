@@ -5,7 +5,6 @@ public class RangeVisualizer : MonoBehaviour
     private LineRenderer rangeLineRenderer;
     private PlayerController controller;
     private PlayerAttack attack;
-    public AttackType visualizerAttackType = AttackType.NormalAtk;
 
     private void Awake()
     {
@@ -35,9 +34,9 @@ public class RangeVisualizer : MonoBehaviour
         }
 
         // 지정된 공격 타입의 데이터 가져오기
-        if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(visualizerAttackType))
+        if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(attack.GetCurrentWeaponType()))
         {
-            AttackStateData attackData = attack.attackStatusDict[visualizerAttackType];
+            AttackStateData attackData = attack.attackStatusDict[attack.GetCurrentWeaponType()];
 
             rangeLineRenderer.startWidth = attackData.projectileThickness;
             rangeLineRenderer.endWidth = attackData.projectileThickness;
@@ -57,9 +56,9 @@ public class RangeVisualizer : MonoBehaviour
         if (rangeLineRenderer != null && attack.projectileSpawnPoint != null)
         {
             // 지정된 공격 타입의 데이터 가져오기
-            if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(visualizerAttackType))
+            if (attack.attackStatusDict != null && attack.attackStatusDict.ContainsKey(attack.GetCurrentWeaponType()))
             {
-                AttackStateData attackData = attack.attackStatusDict[visualizerAttackType];
+                AttackStateData attackData = attack.attackStatusDict[attack.GetCurrentWeaponType()];
 
                 Vector3 start = attack.projectileSpawnPoint.position;
                 Vector3 end = start + controller.transform.forward * attackData.atkRange;
