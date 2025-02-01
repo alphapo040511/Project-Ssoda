@@ -14,5 +14,5 @@ public class PlayerStatusData : ScriptableObject
     public float MoveSpeed;         // 이동 속도
     public float dashDistance;      // 대쉬 거리
     public float dashDuration;      // 무적 시간
-    public float dashCooldown = 2f; // 대시 쿨다운 (초)
+    public float dashCooldown;      // 대시 쿨다운 (초)
 }

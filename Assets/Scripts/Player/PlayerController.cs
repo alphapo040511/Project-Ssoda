@@ -130,7 +130,7 @@ public class PlayerController : MonoBehaviour
         isInvincible = true;
         lastDashTime = Time.time; // 대시 시작 시간 기록
 
-        Vector3 dashDirection = transform.forward;
+        Vector3 dashDirection = transform.forward; // 대시 방향 (플레이어가 바라보는 방향)
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + dashDirection * playerStatus.dashDistance;
 
@@ -138,12 +138,18 @@ public class PlayerController : MonoBehaviour
 
         while (elapsedTime < playerStatus.dashDuration)
         {
-            if (CanMoveToPosition(dashDirection)) break;
-
-            playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
+            // 이동 가능한 경우에만 위치 업데이트
+            if (CanMoveToPosition(targetPosition))
+            {
+                playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
+            }
+            else
+            {
+                Debug.Log("벽에 부딪혀 대시 중단");
+                break;
+            }
 
             elapsedTime += Time.deltaTime;
-
             yield return null;
         }
 
