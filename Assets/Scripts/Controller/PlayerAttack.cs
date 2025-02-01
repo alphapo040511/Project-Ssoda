@@ -65,12 +65,6 @@ public class PlayerAttack : MonoBehaviour
 
         // 무기 변경 입력 처리
         HandleWeaponSwitch();
-
-        // 공격 입력 처리
-        if (Input.GetMouseButtonDown(0))
-        {
-            TryExecuteAttack(hotbarSlots[currentSlotIndex]);
-        }
     }
 
     public AttackType GetCurrentWeaponType()
