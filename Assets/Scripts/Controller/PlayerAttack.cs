@@ -48,7 +48,7 @@ public class PlayerAttack : MonoBehaviour
         hotbarSlots[1] = AttackType.MeleeAtk;
         hotbarSlots[2] = AttackType.ThrowingAtk;
 
-        // 추가 공격 슬롯
+        // 추가 공격 슬롯 (나중에 음료 조합 생기면 하드코딩 부분 지우고 조합에 따른 방식을 넣는 형식으로 수정 예정)
         hotbarSlots[3] = AttackType.SprayAtk;
         hotbarSlots[4] = AttackType.ContinuousAtk;
         hotbarSlots[5] = AttackType.RangedAtk;
@@ -74,7 +74,6 @@ public class PlayerAttack : MonoBehaviour
 
     private void HandleWeaponSwitch()
     {
-        // Q/E 키로 4, 5, 6번 슬롯 순환
         if (Input.GetKeyDown(KeyCode.Q))
         {
             SwitchHotbarLeft();
@@ -84,8 +83,8 @@ public class PlayerAttack : MonoBehaviour
             SwitchHotbarRight();
         }
 
-        // 휠 스크롤로 슬롯 변경
         float scroll = Input.GetAxis("Mouse ScrollWheel");
+
         if (scroll > 0)
         {
             SwitchHotbarLeft(); // 휠 올림: 왼쪽으로 이동
