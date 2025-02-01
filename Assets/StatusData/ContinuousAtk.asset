@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ContinuousAtk
   m_EditorClassIdentifier: 
   attackType: 4
-  atkCooldown: 3
-  attackPower: 40
   ammoCost: 20
+  attackPower: 40
+  atkCooldown: 3
   atkRange: 8
   projectileThickness: 0.8
   projectileSpeed: 10
-  projectileLifetime: 5
+  projectileLifetime: 1.5

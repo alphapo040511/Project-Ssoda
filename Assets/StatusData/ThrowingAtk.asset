@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ThrowingAtk
   m_EditorClassIdentifier: 
   attackType: 1
-  atkCooldown: 0.3
-  attackPower: 100
   ammoCost: 0
-  atkRange: 15
-  projectileThickness: 2
+  attackPower: 100
+  atkCooldown: 1
+  atkRange: 10
+  projectileThickness: 3
   projectileSpeed: 10
-  projectileLifetime: 5
+  projectileLifetime: 1.5

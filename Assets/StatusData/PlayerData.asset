@@ -21,3 +21,4 @@ MonoBehaviour:
   MoveSpeed: 5
   dashDistance: 3
   dashDuration: 0.2
+  dashCooldown: 1

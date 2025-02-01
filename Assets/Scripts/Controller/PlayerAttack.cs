@@ -155,6 +155,7 @@ public class PlayerAttack : MonoBehaviour
 
             Vector3 direction = (targetPosition - projectileSpawnPoint.position).normalized;
 
+            // 프로젝타일 생성
             GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.LookRotation(direction));
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
@@ -162,6 +163,14 @@ public class PlayerAttack : MonoBehaviour
             {
                 projectileRb.velocity = direction * data.projectileSpeed;
                 Physics.IgnoreCollision(projectile.GetComponent<Collider>(), GetComponent<Collider>());
+            }
+
+            // Projectile 스크립트에 데미지와 생존 시간 전달
+            Projectile projectileScript = projectile.GetComponent<Projectile>();
+            if (projectileScript != null)
+            {
+                projectileScript.damage = data.attackPower;
+                projectileScript.lifetime = data.projectileLifetime;
             }
 
             StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position, data.atkRange));

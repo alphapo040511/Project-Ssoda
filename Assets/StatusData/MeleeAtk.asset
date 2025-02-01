@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MeleeAtk
   m_EditorClassIdentifier: 
   attackType: 2
-  atkCooldown: 0.8
-  attackPower: 200
   ammoCost: 0
+  attackPower: 200
+  atkCooldown: 0.8
   atkRange: 10
   projectileThickness: 1.5
   projectileSpeed: 10
-  projectileLifetime: 5
+  projectileLifetime: 1.5

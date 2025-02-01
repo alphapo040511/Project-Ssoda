@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: RangedAtk
   m_EditorClassIdentifier: 
   attackType: 5
-  atkCooldown: 0.5
-  attackPower: 300
   ammoCost: 100
-  atkRange: 10
-  projectileThickness: 0.8
+  attackPower: 300
+  atkCooldown: 0.3
+  atkRange: 15
+  projectileThickness: 2
   projectileSpeed: 10
-  projectileLifetime: 5
+  projectileLifetime: 1.5

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: NormalAtk
   m_EditorClassIdentifier: 
   attackType: 0
-  atkCooldown: 0.5
-  attackPower: 150
   ammoCost: 50
+  attackPower: 150
+  atkCooldown: 0.5
   atkRange: 10
   projectileThickness: 0.8
   projectileSpeed: 10
-  projectileLifetime: 5
+  projectileLifetime: 1.5
