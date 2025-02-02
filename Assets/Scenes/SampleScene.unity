@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 206346546}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject (2)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -166,7 +166,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 211932693}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject (1)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -362,7 +362,7 @@ GameObject:
   - component: {fileID: 341435208}
   - component: {fileID: 341435207}
   - component: {fileID: 341435206}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -467,7 +467,7 @@ GameObject:
   - component: {fileID: 363146648}
   - component: {fileID: 363146647}
   - component: {fileID: 363146646}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -768,7 +768,7 @@ GameObject:
   - component: {fileID: 564952654}
   - component: {fileID: 564952653}
   - component: {fileID: 564952652}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -918,7 +918,7 @@ GameObject:
   - component: {fileID: 828152194}
   - component: {fileID: 828152193}
   - component: {fileID: 828152192}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1270,7 +1270,7 @@ GameObject:
   - component: {fileID: 1100680557}
   - component: {fileID: 1100680556}
   - component: {fileID: 1100680555}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1480,7 +1480,7 @@ GameObject:
   - component: {fileID: 1321054123}
   - component: {fileID: 1321054122}
   - component: {fileID: 1321054121}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1585,7 +1585,7 @@ GameObject:
   - component: {fileID: 1488522036}
   - component: {fileID: 1488522035}
   - component: {fileID: 1488522034}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1734,7 +1734,7 @@ GameObject:
   - component: {fileID: 1639620429}
   - component: {fileID: 1639620428}
   - component: {fileID: 1639620427}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1839,7 +1839,7 @@ GameObject:
   - component: {fileID: 1682719652}
   - component: {fileID: 1682719651}
   - component: {fileID: 1682719650}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (6)
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -1956,7 +1956,7 @@ GameObject:
   - component: {fileID: 1877890720}
   - component: {fileID: 1877890719}
   - component: {fileID: 1877890718}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BW
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2092,7 +2092,7 @@ GameObject:
   - component: {fileID: 2043227922}
   - component: {fileID: 2043227921}
   - component: {fileID: 2043227920}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RW
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2276,7 +2276,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2077906712}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -2569,6 +2569,7 @@ MonoBehaviour:
     data: {fileID: 11400000, guid: 122ea187f45160c4da4495bcfc35f289, type: 2}
   - type: 5
     data: {fileID: 11400000, guid: 10e89ba2c5a4110498b3d403b8a8aeef, type: 2}
+  currentWeaponType: 0
 --- !u!114 &2094186991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2599,7 +2600,7 @@ GameObject:
   - component: {fileID: 2141070040}
   - component: {fileID: 2141070039}
   - component: {fileID: 2141070038}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LW
   m_TagString: Wall
   m_Icon: {fileID: 0}

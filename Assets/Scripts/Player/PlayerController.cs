@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour
     [Header("Player")]
     public PlayerStatusData playerStatus;
     public PlayerInput playerInput;
+    public Rigidbody playerRigidbody;
 
-    private Rigidbody playerRigidbody;
     private ShakeDrink shakeDrink;
     private PlayerAttack playerAttack;
     private GizmoVisualizer visualizer;
@@ -42,6 +42,9 @@ public class PlayerController : MonoBehaviour
         {
             HandleMoveAndRotate();
         }
+
+        // 회전 속도 제어
+        playerRigidbody.angularVelocity = Vector3.zero;
     }
 
     private void Update()
@@ -85,29 +88,30 @@ public class PlayerController : MonoBehaviour
     {
         if (playerStatus == null) return;
 
-        // 카메라의 forward와 right 벡터를 이용하여 입력 방향 변환
-        Vector3 camForward = Camera.main.transform.forward;
-        Vector3 camRight = Camera.main.transform.right;
-
-        // y축 영향 제거 (평면 이동)
-        camForward.y = 0;
-        camRight.y = 0;
-
-        // 방향 정규화
-        camForward.Normalize();
-        camRight.Normalize();
-
-        // 입력 방향 벡터를 카메라 기준으로 변환
-        Vector3 inputDirection = (camRight * playerInput.moveX + camForward * playerInput.moveY).normalized;
+        Vector3 inputDirection = (Camera.main.transform.right * playerInput.moveX
+                                + Camera.main.transform.forward * playerInput.moveY).normalized;
+        inputDirection.y = 0;
 
         if (inputDirection.magnitude > 0.1f)
         {
+            // 부드러운 회전
             Quaternion targetRotation = Quaternion.LookRotation(inputDirection);
-            playerRigidbody.rotation = Quaternion.Slerp(playerRigidbody.rotation, targetRotation, Time.deltaTime * 10f);
+            playerRigidbody.rotation = Quaternion.Slerp(
+                playerRigidbody.rotation,
+                targetRotation,
+                Time.deltaTime * 10f
+            );
 
-            // StatusData에서 moveSpeed 값 가져오기
-            Vector3 moveDistance = inputDirection * playerStatus.MoveSpeed * Time.deltaTime;
-            playerRigidbody.MovePosition(playerRigidbody.position + moveDistance);
+            // 이동 속도 적용
+            playerRigidbody.velocity = inputDirection * playerStatus.MoveSpeed;
+
+            // 회전 속도 제어
+            playerRigidbody.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            // 입력 없을 시 즉시 정지
+            playerRigidbody.velocity = Vector3.zero;
         }
     }
 
@@ -128,55 +132,59 @@ public class PlayerController : MonoBehaviour
     {
         isDashing = true;
         isInvincible = true;
-        lastDashTime = Time.time; // 대시 시작 시간 기록
+        lastDashTime = Time.time;
 
-        Vector3 dashDirection = transform.forward; // 대시 방향 (플레이어가 바라보는 방향)
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + dashDirection * playerStatus.dashDistance;
+        Vector3 dashDirection = transform.forward;
+        float dashSpeed = playerStatus.dashDistance / playerStatus.dashDuration;
+
+        // 초기 속도 적용
+        playerRigidbody.velocity = dashDirection * dashSpeed;
 
         float elapsedTime = 0f;
-
         while (elapsedTime < playerStatus.dashDuration)
         {
-            // 이동 가능한 경우에만 위치 업데이트
-            if (CanMoveToPosition(targetPosition))
+            // 벽 충돌 감지
+            if (CheckFrontCollision())
             {
-                playerRigidbody.MovePosition(Vector3.Lerp(startPosition, targetPosition, elapsedTime / playerStatus.dashDuration));
-            }
-            else
-            {
-                Debug.Log("벽에 부딪혀 대시 중단");
+                Debug.Log("벽 충돌로 대시 중단");
                 break;
             }
+
+            // 회전 속도 제어
+            playerRigidbody.angularVelocity = Vector3.zero;
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
+        // 대시 종료 후 속도 초기화
+        playerRigidbody.velocity = Vector3.zero;
         isDashing = false;
 
-        yield return new WaitForSeconds(0.2f); // 무적 시간
+        yield return new WaitForSeconds(0.2f);
         isInvincible = false;
-
-        yield return new WaitForSeconds(playerStatus.dashCooldown - 0.2f); // 쿨다운 완료 대기
     }
 
-    private bool CanMoveToPosition(Vector3 targetPosition)
+    private bool CheckFrontCollision()
     {
-        // 현재 위치에서 목표 위치로의 방향과 거리 계산
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        float distance = Vector3.Distance(transform.position, targetPosition);
+        // 캡슐 캐스트로 전방 충돌 검출
+        float radius = 0.5f;
+        float distance = 0.1f;
+        bool isColliding = Physics.SphereCast(
+            transform.position,
+            radius,
+            transform.forward,
+            out RaycastHit hit,
+            distance,
+            LayerMask.GetMask("Wall")
+        );
 
-        // 레이캐스트를 사용하여 충돌 체크
-        Ray ray = new Ray(transform.position, direction);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, distance))
+        if (isColliding)
         {
-            if (hitInfo.collider.CompareTag("Wall"))
-            {
-                return false;
-            }
+            // 벽에 부딪혔을 때 회전 속도 초기화
+            playerRigidbody.angularVelocity = Vector3.zero;
         }
 
-        return true;
+        return isColliding;
     }
 }

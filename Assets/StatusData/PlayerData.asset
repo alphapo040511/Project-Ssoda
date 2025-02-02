@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxAmmo: 1000
   HealthPoint: 1000
-  AttackPower: 100
-  AttackSpeed: 2
   CritChance: 25
   CritDamage: 75
-  MoveSpeed: 5
+  MoveSpeed: 10
   dashDistance: 3
   dashDuration: 0.2
   dashCooldown: 1
