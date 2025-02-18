@@ -182,7 +182,6 @@ public class PlayerAttack : MonoBehaviour
             if (projectileScript != null)
             {
                 projectileScript.damage = data.attackPower;
-                projectileScript.lifetime = data.projectileLifetime;
             }
 
             StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position, data.atkRange));

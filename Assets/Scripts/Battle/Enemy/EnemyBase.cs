@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyBase : MonoBehaviour
 {
     [Header("Enemy Data")]
     public EnemyData enemyData;  // 몬스터 타입 별 스크립터블 오브젝트
 
-    public int currentHealth;
+    public float currentHealth;
     public BattleRoom room;            // 몬스터가 속한 방의 트리거
     private Animator animator;
     private bool isDead = false;
     private bool isActive = false;  // 플레이어가 방에 입장 했는지/안 했는지에 따른 몬스터 활성화 여부
+
+    [Header("UI")]
+    public Slider healthBar;
 
     // 몬스터 상태 (대기, 이동, 공격, 피격, 사망)
     protected enum EnemyState
@@ -30,6 +34,9 @@ public class EnemyBase : MonoBehaviour
         if (enemyData != null)
         {
             currentHealth = enemyData.maxHealth;
+            healthBar.maxValue = currentHealth;
+            healthBar.value = currentHealth;
+
             animator = GetComponent<Animator>();
 
             if (animator != null && enemyData.animatorController != null)
@@ -97,12 +104,13 @@ public class EnemyBase : MonoBehaviour
     }
 
     // 몬스터가 데미지를 받았을 때 처리
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (isDead)
             return;
 
         currentHealth -= damage;
+        healthBar.value = currentHealth;
 
         // 피격 애니메이션 트리거
         if (animator != null)
@@ -136,6 +144,8 @@ public class EnemyBase : MonoBehaviour
         {
             room.EnemyDefeated(this);
         }
+
+        Destroy(gameObject);    // 임시로 파괴
     }
 
     // 몬스터가 공격할 때
