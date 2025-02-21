@@ -55,22 +55,6 @@ public class EnemyBase : MonoBehaviour
         if (!isActive || isDead)
             return;
 
-        // 테스트용 코드
-        if (isActive)
-        {
-            Renderer renderer = GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                renderer.material.color = Color.red; // 빨간색으로 변경
-            }
-        }
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-        // 여기까지 테스트
-
         HandleEnemyBehavior();
     }
 

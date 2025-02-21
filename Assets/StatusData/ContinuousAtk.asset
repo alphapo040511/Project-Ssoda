@@ -15,8 +15,15 @@ MonoBehaviour:
   attackType: 4
   ammoCost: 20
   attackPower: 40
-  atkCooldown: 3
+  atkCooldown: 0
   atkRange: 8
-  projectileThickness: 0.8
-  projectileSpeed: 10
-  projectileLifetime: 1.5
+  useProjectile: 0
+  projectileThickness: 0
+  projectileSpeed: 0
+  isAreaAttack: 1
+  areaWidth: 0.8
+  attackAngle: 0
+  isContinuousAttack: 1
+  damageInterval: 0.2
+  isThrowingAttack: 0
+  explosionDelay: 0

@@ -61,10 +61,12 @@ public class PlayerAttack : MonoBehaviour
     private void Update()
     {
         // 공격 속도 업데이트
-        foreach (var attackType in attackStatusDict.Keys)
+        /*foreach (var attackType in attackStatusDict.Keys)
         {
             AttackStateData data = attackStatusDict[attackType];
-        }
+        }*/
+
+        // 위에 foreach문 사용 안 해서 변수처리 해둠 > 어디에 쓰이는건가요?
 
         // 무기 변경 입력 처리
         HandleWeaponSwitch();
@@ -127,15 +129,28 @@ public class PlayerAttack : MonoBehaviour
         Debug.Log($"현재 무기 타입: {currentWeaponType}");
     }
 
+    // 탄약, 쿨타임 계산 후 공격 시도 (공격 타입에 관계없이 사용 가능 메서드)
     public void TryExecuteAttack(AttackType attackType)
     {
         if (!attackStatusDict.ContainsKey(attackType)) return;
 
-        // 탄약 확인
-        if (playerReload != null && !playerReload.UseAmmo(attackType, attackStatusDict))
+        if (attackType == AttackType.SprayAtk || attackType == AttackType.ContinuousAtk)        // 지속적으로 연료를 소모하는 무기타입일 경우
         {
-            Debug.Log("탄약이 없습니다! 재장전하세요.");
-            return;
+            // 탄약 확인
+            if (playerReload != null && !playerReload.UseSprayAmmo(attackType, attackStatusDict))
+            {
+                Debug.Log("탄약이 없습니다! 재장전하세요.");
+                return;
+            }
+        }
+        else
+        {
+            // 탄약 확인
+            if (playerReload != null && !playerReload.UseAmmo(attackType, attackStatusDict))
+            {
+                Debug.Log("탄약이 없습니다! 재장전하세요.");
+                return;
+            }
         }
 
         AttackStateData data = attackStatusDict[attackType];
@@ -152,11 +167,14 @@ public class PlayerAttack : MonoBehaviour
     {
         if (attackStatusDict.TryGetValue(attackType, out AttackStateData data))
         {
+
+
             AttackAtMouseDirection(data);
             Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
         }
     }
 
+    // 단발 공격
     private void AttackAtMouseDirection(AttackStateData data)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -177,7 +195,7 @@ public class PlayerAttack : MonoBehaviour
                 Physics.IgnoreCollision(projectile.GetComponent<Collider>(), GetComponent<Collider>());
             }
 
-            // Projectile 스크립트에 데미지와 생존 시간 전달
+            // Projectile 스크립트에 데미지 전달
             Projectile projectileScript = projectile.GetComponent<Projectile>();
             if (projectileScript != null)
             {

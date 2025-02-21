@@ -16,9 +16,9 @@ public enum AttackType
 public class AttackStateData : ScriptableObject
 {
     public AttackType attackType;           // 공격 타입
-    public int ammoCost;                    // 탄약 소모량
+    public int ammoCost;                    // 탄약 소모량 (근접은 0, 연사,분사형은 1초당 소모량)
     public float attackPower;               // 공격력
-    public float atkCooldown;               // 공격 속도 (초당)
+    public float atkCooldown;               // 공격 속도 (초당) (분사, 연사형은 공속이 0이고 damageInterval 에서 조절)
     public float atkRange;                  // 사거리
 
     [Header("발사체 공격")]

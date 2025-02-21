@@ -17,6 +17,13 @@ MonoBehaviour:
   attackPower: 100
   atkCooldown: 1
   atkRange: 10
+  useProjectile: 1
   projectileThickness: 3
   projectileSpeed: 10
-  projectileLifetime: 1.5
+  isAreaAttack: 1
+  areaWidth: 3
+  attackAngle: 360
+  isContinuousAttack: 0
+  damageInterval: 0
+  isThrowingAttack: 1
+  explosionDelay: 1.5

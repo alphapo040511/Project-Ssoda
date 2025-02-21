@@ -7,7 +7,7 @@ public class PlayerReload : MonoBehaviour
     public PlayerStatusData playerStatus;       // 플레이어 스탯 데이터 참조
 
     [Header("Ammo")]
-    public int currentAmmo;                     // 현재 탄약
+    public float currentAmmo;                   // 현재 탄약
     public int maxReserves = 2;                 // 최대 예비 탄약 수
     public int currentReserves;                 // 현재 예비 탄약 수
 
@@ -111,6 +111,37 @@ public class PlayerReload : MonoBehaviour
                 Debug.Log("탄약 부족!");
                 return false; // 탄약 부족
             }
+        }
+
+        Debug.LogError($"공격 타입 {attackType}에 대한 데이터를 찾을 수 없습니다.");
+        return false;
+    }
+
+    public bool UseSprayAmmo(AttackType attackType, Dictionary<AttackType, AttackStateData> attackStatusDict)
+    {
+        if (attackStatusDict.TryGetValue(attackType, out AttackStateData data))
+        {
+            int ammoCost = data.ammoCost;
+
+            // 연사는 탄약이 조금이라도 있으면 공격 가능
+            if (currentAmmo <= 0)
+            {
+                Debug.Log("탄약 부족!");
+                return false; // 탄약 부족
+            }
+
+            // 1초에 ammoCost 만큼 꾸준히 소모 >> ammoCost == 20일때 0.1초 2 소모
+            // 연사는 누르고 있는동안 업데이트에서 호출될테니까
+            currentAmmo -= ammoCost * Time.deltaTime;
+
+            // 탄약이 0 이하로 떨어지면 0으로 설정
+            if (currentAmmo < 0)
+            {
+                currentAmmo = 0;
+            }
+
+            Debug.Log($"탄약 사용: {ammoCost * Time.deltaTime}, 남은 탄약: {currentAmmo}");
+            return true; // 공격 성공
         }
 
         Debug.LogError($"공격 타입 {attackType}에 대한 데이터를 찾을 수 없습니다.");

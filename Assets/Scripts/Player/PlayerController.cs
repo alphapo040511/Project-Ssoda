@@ -51,10 +51,32 @@ public class PlayerController : MonoBehaviour
     {
         if (playerStatus == null) return;
 
-        if (Input.GetMouseButtonDown(0))
+        /*if (Input.GetMouseButtonDown(0))
         {
             // 현재 선택된 무기 타입으로 공격
             playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
+        }*/
+
+        // 무기 타입에 따라 공격 조작이 다른 것 같아서 이렇게 해뒀는데 분사형도 클릭 토글 형식으로 공격할거라면 위로 변경해도됨
+        switch (playerAttack.GetCurrentWeaponType())
+        {
+            case AttackType.NormalAtk:
+            case AttackType.MeleeAtk:
+                if (Input.GetMouseButtonDown(0))
+                    playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
+                break;
+
+            case AttackType.ThrowingAtk:
+            case AttackType.RangedAtk:
+                if (Input.GetMouseButtonDown(0))
+                    playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
+                break;
+
+            case AttackType.SprayAtk:
+            case AttackType.ContinuousAtk:
+                if (Input.GetMouseButton(0))
+                    playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
+                break;
         }
 
         // CapsLock 키 입력 감지로 토글
