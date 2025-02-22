@@ -16,7 +16,7 @@ MonoBehaviour:
   ammoCost: 0
   attackPower: 200
   atkCooldown: 0.8
-  atkRange: 10
+  atkRange: 3.2
   useProjectile: 0
   projectileThickness: 0
   projectileSpeed: 0

@@ -29,6 +29,8 @@ public class BattleRoom : MonoBehaviour
         if (other.CompareTag("Player")) // 플레이어가 들어왔을 때
         {
             EnterRoom();
+            PlayerAttack player = other.GetComponent<PlayerAttack>();
+            player.currentRoom = this;
         }
     }
 

@@ -26,4 +26,4 @@ MonoBehaviour:
   isContinuousAttack: 0
   damageInterval: 0
   isThrowingAttack: 1
-  explosionDelay: 1.5
+  explosionDelay: 1

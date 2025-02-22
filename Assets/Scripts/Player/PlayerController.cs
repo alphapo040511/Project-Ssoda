@@ -90,6 +90,11 @@ public class PlayerController : MonoBehaviour
             rangeVisualizer.UpdateRangeVisualizer();
         }
 
+        /*if (!isDashing && isRangeVisualizerActive && playerAttack.currentWeaponType == AttackType.MeleeAtk)
+        {
+            rangeVisualizer.DrawMeleeAttackRange();
+        }*/
+
         if (Input.GetKeyDown(KeyCode.Space) && !isDashing && Time.time >= lastDashTime + playerStatus.dashCooldown)
         {
             StartCoroutine(Dash());

@@ -15,6 +15,7 @@ public class PlayerAttack : MonoBehaviour
     public Dictionary<AttackType, AttackStateData> attackStatusDict;
     private Dictionary<AttackType, float> lastAttackTimeDict = new Dictionary<AttackType, float>();
     public AttackType currentWeaponType; // 현재 무기 타입
+    public BattleRoom currentRoom;
 
     private PlayerReload playerReload;
 
@@ -167,16 +168,33 @@ public class PlayerAttack : MonoBehaviour
     {
         if (attackStatusDict.TryGetValue(attackType, out AttackStateData data))
         {
+            switch (attackType)
+            {
+                case AttackType.NormalAtk:
+                    AttackAtMouseDirection(data);
+                    Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
+                    break;
 
+                case AttackType.MeleeAtk:
+                    MeleeAttack(data);
+                    break;
 
-            AttackAtMouseDirection(data);
-            Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
+                case AttackType.ThrowingAtk:
+                case AttackType.RangedAtk:
+                    break;
+
+                case AttackType.SprayAtk:
+                case AttackType.ContinuousAtk:
+                    break;
+            }
         }
     }
 
-    // 단발 공격
+    // 캐릭터 기준 마우스 방향 단발 공격 (NormalAtk)
     private void AttackAtMouseDirection(AttackStateData data)
     {
+        if (currentWeaponType != AttackType.NormalAtk) return;
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hitInfo))
         {
@@ -203,6 +221,42 @@ public class PlayerAttack : MonoBehaviour
             }
 
             StartCoroutine(DestroyProjectileAfterRange(projectile, projectileSpawnPoint.position, data.atkRange));
+        }
+    }
+
+    // 근접 공격 (MeleeAtk)
+    private void MeleeAttack(AttackStateData data)
+    {
+        if (currentWeaponType != AttackType.MeleeAtk || currentRoom == null) return;
+
+        Vector3 playerPosition = transform.position;
+        Vector3 mousePos = Input.mousePosition;
+        float distanceFromCamera = Vector3.Distance(Camera.main.transform.position, transform.position);
+        mousePos.z = distanceFromCamera; // 카메라와 플레이어 사이의 거리로 설정
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        worldPos.y = playerPosition.y;
+
+        Vector3 attackDirection = (worldPos - playerPosition).normalized; // 마우스 방향으로 업데이트
+
+        for (int i = currentRoom.enemies.Count - 1; i >= 0; i--)
+        {
+            EnemyBase enemy = currentRoom.enemies[i];
+            if (enemy == null) continue;
+
+            float distance = Vector3.Distance(enemy.transform.position, playerPosition);
+            if (distance > data.atkRange) continue;
+
+            Vector3 targetDirection = (enemy.transform.position - playerPosition).normalized;
+            float angle = Vector3.Angle(attackDirection, targetDirection);
+
+            //Debug.LogWarning($"공격 방향 {attackDirection}, 마우스 방향 {mouseWorldPos}, 플레이어 위치 {playerPosition}, 거리: {distance}, 각도: {angle}");
+
+            if (angle <= data.attackAngle / 2)
+            {
+                Debug.LogError("데미지 입힘!");
+                enemy.TakeDamage(data.attackPower);
+            }
         }
     }
 
