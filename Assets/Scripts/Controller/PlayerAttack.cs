@@ -16,6 +16,7 @@ public class PlayerAttack : MonoBehaviour
     private Dictionary<AttackType, float> lastAttackTimeDict = new Dictionary<AttackType, float>();
     public AttackType currentWeaponType; // 현재 무기 타입
     public BattleRoom currentRoom;
+    public Dictionary<EnemyBase, float> lastDamageTime = new Dictionary<EnemyBase, float>();   // 지속 데미지를 줄 때 몬스터 별로 마지막 데미지를 준 시간 저장
 
     private PlayerReload playerReload;
 
@@ -172,7 +173,7 @@ public class PlayerAttack : MonoBehaviour
             {
                 case AttackType.NormalAtk:
                     AttackAtMouseDirection(data);
-                    Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
+                    //Debug.Log($"Executed {attackType} : Speed={data.projectileSpeed}");
                     break;
 
                 case AttackType.MeleeAtk:
@@ -185,6 +186,7 @@ public class PlayerAttack : MonoBehaviour
 
                 case AttackType.SprayAtk:
                 case AttackType.ContinuousAtk:
+                    ContinuousAttack(data);
                     break;
             }
         }
@@ -254,11 +256,72 @@ public class PlayerAttack : MonoBehaviour
 
             if (angle <= data.attackAngle / 2)
             {
-                Debug.LogError("데미지 입힘!");
                 enemy.TakeDamage(data.attackPower);
             }
         }
     }
+
+    // 지속 공격 (SprayAtk, ContinuousAtk)
+    private void ContinuousAttack(AttackStateData data)
+    {
+        if (!data.isContinuousAttack || currentRoom == null) return;
+
+        Vector3 playerPosition = transform.position;
+        Vector3 mousePos = Input.mousePosition;
+        float distanceFromCamera = Vector3.Distance(Camera.main.transform.position, transform.position);
+        mousePos.z = distanceFromCamera; // 카메라와 플레이어 사이의 거리 설정
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        worldPos.y = playerPosition.y;
+
+        Vector3 attackDirection = (worldPos - playerPosition).normalized; // 마우스 방향 업데이트
+
+        float currentTime = Time.time; // 현재 시간
+
+        for (int i = currentRoom.enemies.Count - 1; i >= 0; i--)
+        {
+            EnemyBase enemy = currentRoom.enemies[i];
+            if (enemy == null) continue;
+
+            float distance = Vector3.Distance(enemy.transform.position, playerPosition);
+            if (distance > data.atkRange) continue;
+
+            bool isInAttackRange = false;
+
+            if (data.attackAngle > 0) // 부채꼴 범위 공격 (SprayAtk)
+            {
+                Vector3 targetDirection = (enemy.transform.position - playerPosition).normalized;
+                float angle = Vector3.Angle(attackDirection, targetDirection);
+
+                if (angle <= data.attackAngle / 2)
+                {
+                    isInAttackRange = true;
+                }
+            }
+            else if (data.areaWidth > 0) // 직선 범위 공격 (ContinuousAtk)
+            {
+                Vector3 relativePos = enemy.transform.position - playerPosition;
+                float dot = Vector3.Dot(attackDirection, relativePos.normalized);
+                float perpendicularDist = Mathf.Abs(Vector3.Cross(attackDirection, relativePos).y);
+
+                if (dot > 0 && perpendicularDist <= data.areaWidth / 2)
+                {
+                    isInAttackRange = true;
+                }
+            }
+
+            if (isInAttackRange)
+            {
+                // 첫 공격 이거나 마지막으로 공격한 시간에서 damageInterval만큼 시간이 흘렀다면
+                if (!lastDamageTime.ContainsKey(enemy) || currentTime - lastDamageTime[enemy] >= data.damageInterval)
+                {
+                    enemy.TakeDamage(data.attackPower);
+                    lastDamageTime[enemy] = currentTime;    // 마지막 공격시간 업데이트
+                }
+            }
+        }
+    }
+
 
     private IEnumerator DestroyProjectileAfterRange(GameObject projectile, Vector3 startPosition, float range)
     {
