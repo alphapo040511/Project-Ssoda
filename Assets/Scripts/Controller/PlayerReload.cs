@@ -16,6 +16,8 @@ public class PlayerReload : MonoBehaviour
     public float chargeInterval = 3f;           // 3초마다 충전
     private float[] reserveCharge;              // 예비 병 충전 상태 (0.0 ~ 1.0)
 
+    public float throwingAtkDamage;        // 투척 공격 데미지 임시 저장 변수
+
     private void Start()
     {
         // 초기화: 현재 탄약을 최대 탄약으로 설정, 예비 탄약을 최대로 설정
@@ -100,16 +102,37 @@ public class PlayerReload : MonoBehaviour
         {
             int ammoCost = data.ammoCost;
 
-            if (currentAmmo >= ammoCost)
+            if (attackType == AttackType.ThrowingAtk)
             {
-                currentAmmo -= ammoCost;
-                Debug.Log($"탄약 사용: {ammoCost}, 남은 탄약: {currentAmmo}");
-                return true; // 탄약 소모 성공
+                if (currentAmmo > 0)
+                {
+                    Debug.Log($"탄약 사용: {currentAmmo}, 남은 탄약: {0}");
+                    float defaultDamage = 100f;
+                    float extraDamage = Mathf.Round(currentAmmo * 25) / 10f;
+                    throwingAtkDamage = defaultDamage + extraDamage;
+
+                    currentAmmo = 0;
+                    return true; // 탄약 소모 성공
+                }
+                else
+                {
+                    Debug.Log("탄약 부족!");
+                    return false; // 탄약 부족
+                }
             }
             else
             {
-                Debug.Log("탄약 부족!");
-                return false; // 탄약 부족
+                if (currentAmmo >= ammoCost)
+                {
+                    currentAmmo -= ammoCost;
+                    Debug.Log($"탄약 사용: {ammoCost}, 남은 탄약: {currentAmmo}");
+                    return true; // 탄약 소모 성공
+                }
+                else
+                {
+                    Debug.Log("탄약 부족!");
+                    return false; // 탄약 부족
+                }
             }
         }
 

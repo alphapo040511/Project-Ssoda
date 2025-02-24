@@ -6,7 +6,9 @@ public class RangeVisualizer : MonoBehaviour
     private LineRenderer rangeLineRenderer;
     private PlayerController controller;
     private PlayerAttack attack;
+    private Vector3 throwRangePosition;     // 투척 공격 범위 원점 좌표
 
+    public GameObject throwRangeIndicator; // 범위 표시용 원 (프리팹 또는 스프라이트)
     public List<AttackStateData> attackState = new List<AttackStateData>();
 
     private void Awake()
@@ -122,6 +124,35 @@ public class RangeVisualizer : MonoBehaviour
 
         // 마지막 점과 오른쪽 경계를 연결
         Gizmos.DrawLine(prevPoint, playerPosition + rightBoundary);
+    }
+
+
+    public void ShowThrowRange()
+    {
+        if (!throwRangeIndicator.activeSelf)
+        {
+            throwRangeIndicator.SetActive(true);
+        }
+
+        Vector3 playerPosition = transform.position;
+        Vector3 mousePos = Input.mousePosition;
+        float distanceFromCamera = Vector3.Distance(Camera.main.transform.position, transform.position);
+        mousePos.z = distanceFromCamera;
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        worldPos.y = playerPosition.y;
+
+        AttackStateData data = attack.attackStatusDict[attack.currentWeaponType];
+
+        // 공격 중심점 계산 (플레이어 기준)
+        throwRangePosition = playerPosition + (worldPos - playerPosition).normalized * data.atkRange;
+
+        // throwRangeIndicator의 위치를 로컬 좌표 기준으로 설정
+        throwRangeIndicator.transform.localPosition = transform.InverseTransformPoint(throwRangePosition);
+
+        // 원의 크기를 areaWidth에 맞게 조정 (SpriteRenderer 또는 LineRenderer)
+        float areaWidth = data.areaWidth;
+        throwRangeIndicator.transform.localScale = new Vector3(areaWidth * 2, 0.001f, areaWidth * 2);
     }
 
 

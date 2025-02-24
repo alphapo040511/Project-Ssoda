@@ -21,7 +21,7 @@ MonoBehaviour:
   projectileThickness: 0
   projectileSpeed: 0
   isAreaAttack: 1
-  areaWidth: 0.5
+  areaWidth: 0
   attackAngle: 100
   isContinuousAttack: 1
   damageInterval: 0.2

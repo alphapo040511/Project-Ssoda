@@ -68,7 +68,8 @@ public class PlayerController : MonoBehaviour
 
             case AttackType.ThrowingAtk:
             case AttackType.RangedAtk:
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonUp(0))
+                    rangeVisualizer.throwRangeIndicator.SetActive(false);
                     playerAttack.TryExecuteAttack(playerAttack.GetCurrentWeaponType());
                 break;
 
@@ -88,6 +89,14 @@ public class PlayerController : MonoBehaviour
         if (!isDashing && isRangeVisualizerActive)
         {
             rangeVisualizer.UpdateRangeVisualizer();
+
+            if (playerAttack.GetCurrentWeaponType() == AttackType.ThrowingAtk || playerAttack.GetCurrentWeaponType() == AttackType.RangedAtk)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    rangeVisualizer.ShowThrowRange();
+                }
+            }
         }
 
         /*if (!isDashing && isRangeVisualizerActive && playerAttack.currentWeaponType == AttackType.MeleeAtk)

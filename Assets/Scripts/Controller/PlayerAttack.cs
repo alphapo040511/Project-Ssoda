@@ -182,6 +182,7 @@ public class PlayerAttack : MonoBehaviour
 
                 case AttackType.ThrowingAtk:
                 case AttackType.RangedAtk:
+                    ThrowingAttack(data);
                     break;
 
                 case AttackType.SprayAtk:
@@ -319,6 +320,44 @@ public class PlayerAttack : MonoBehaviour
                     lastDamageTime[enemy] = currentTime;    // 마지막 공격시간 업데이트
                 }
             }
+        }
+    }
+
+    // 투척 공격 (ThrowingAtk, RangedAtk)
+    private void ThrowingAttack(AttackStateData data)
+    {
+        if (!data.isThrowingAttack || currentRoom == null) return;
+
+        Vector3 playerPosition = transform.position;
+        Vector3 mousePos = Input.mousePosition;
+        float distanceFromCamera = Vector3.Distance(Camera.main.transform.position, playerPosition);
+        mousePos.z = distanceFromCamera; // 카메라와의 거리 설정
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        worldPos.y = playerPosition.y;
+
+        // 공격 중심점: 플레이어에서 atkRange 만큼 떨어진 지점 = 폭발 범위의 원점
+        Vector3 attackCenter = playerPosition + (worldPos - playerPosition).normalized * data.atkRange;
+
+        // explosionDelay 후 데미지 적용
+        StartCoroutine(DelayedExplosion(attackCenter, data, currentWeaponType));
+    }
+
+    private IEnumerator DelayedExplosion(Vector3 attackCenter, AttackStateData data, AttackType attackType)
+    {
+        yield return new WaitForSeconds(data.explosionDelay);
+
+        float attackPower = (attackType == AttackType.RangedAtk) ? data.attackPower : playerReload.throwingAtkDamage;
+
+        for (int i = currentRoom.enemies.Count - 1; i >= 0; i--)
+        {
+            EnemyBase enemy = currentRoom.enemies[i];
+            if (enemy == null) continue;
+
+            float distance = Vector3.Distance(enemy.transform.position, attackCenter);
+            if (distance > data.areaWidth) continue; // 원형 범위 판정
+
+            enemy.TakeDamage(attackPower);
         }
     }
 
